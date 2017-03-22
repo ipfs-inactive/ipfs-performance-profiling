@@ -2,8 +2,8 @@
 
 const preparers = {
   'go': require('./go'),
-  // 'cli': require('./cli'),
-  'js-core': require('./js-core')
+  'js-core': require('./js-core'),
+  'js-http': require('./js-http')
 }
 
 module.exports = function prepare (test, env) {

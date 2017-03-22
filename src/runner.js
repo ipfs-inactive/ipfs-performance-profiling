@@ -10,9 +10,9 @@ const suites = require('./suites')
 const prepare = require('./prepare')
 
 const ENVIRONMENTS = [
-  // 'go',
+  'go',
   'js-core',
-  // 'js-http'
+  'js-http'
 ]
 
 exports.run = run

@@ -104,5 +104,13 @@ function generateReport (results, callback) {
 }
 
 function cleanOutput (out) {
-  return out.replace(/Swarm listening on .*\n/g, '')
+  const patternsToObliterate = [
+    /Swarm listening on .*\n/g,
+    /Starting at .*\n/g,
+    /API is listening on: .*\n/g,
+    /Gateway \(readonly\) is listening on: .*\n/g,
+    /Stopping server/g
+  ]
+
+  return patternsToObliterate.reduce((out, p) => out.replace(p, ''), out)
 }
