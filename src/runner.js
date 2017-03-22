@@ -45,7 +45,7 @@ function runOne (_suite, callback) {
 
   tests.forEach((test, index) => {
     ENVIRONMENTS.forEach((env) => {
-      const name = (test.name || (suite.name + '-' + (index + 1))) + '-' + env
+      const name = (test.name || (suite.name) + (tests.length > 1 ? '-' + (index + 1) : '')) + '-' + env
       s.add(name, prepare(test, env), { defer: true })
     })
   })
@@ -62,26 +62,24 @@ function result (suite) {
   // console.log(suite)
   return {
     name: suite.name,
-    benchmarks: suite.map(benchmark => {
-      return {
-        name: benchmark.name,
-        suite: suite.name,
-        code: benchmark.fn.toString(),
-        platform: Benchmark.platform,
-        cpus: os.cpus(),
-        loadavg: os.loadavg(),
-        count: benchmark.count,
-        hz: benchmark.hz,
-        now: Date.now(),
-        stats: {
-          moe: benchmark.stats.moe,
-          rme: benchmark.stats.rme,
-          sem: benchmark.stats.sem,
-          deviation: benchmark.stats.deviation,
-          mean: benchmark.stats.mean,
-          variance: benchmark.stats.variance
-        }
+    benchmarks: suite.map(benchmark => ({
+      name: benchmark.name,
+      suite: suite.name,
+      code: benchmark.fn.toString(),
+      platform: Benchmark.platform,
+      cpus: os.cpus(),
+      loadavg: os.loadavg(),
+      count: benchmark.count,
+      hz: benchmark.hz,
+      now: Date.now(),
+      stats: {
+        moe: benchmark.stats.moe,
+        rme: benchmark.stats.rme,
+        sem: benchmark.stats.sem,
+        deviation: benchmark.stats.deviation,
+        mean: benchmark.stats.mean,
+        variance: benchmark.stats.variance
       }
-    })
+    }))
   }
 }
