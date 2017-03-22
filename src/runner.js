@@ -7,6 +7,13 @@ const Suite = Benchmark.Suite
 const os = require('os')
 
 const suites = require('./suites')
+const prepare = require('./prepare')
+
+const ENVIRONMENTS = [
+  // 'go',
+  'js-core',
+  // 'js-http'
+]
 
 exports.run = run
 
@@ -37,7 +44,10 @@ function runOne (_suite, callback) {
   }
 
   tests.forEach((test, index) => {
-    s.add(test.name || (suite.name + '-' + (index + 1)), test, { defer: true })
+    ENVIRONMENTS.forEach((env) => {
+      const name = (test.name || (suite.name + '-' + (index + 1))) + '-' + env
+      s.add(name, prepare(test, env), { defer: true })
+    })
   })
 
   s.on('complete', () => {

@@ -33,7 +33,13 @@ mapSeries(
           if (err) {
             callback(err)
           } else {
-            callback(null, JSON.parse(stdout))
+            const out = cleanOutput(stdout)
+            try {
+              callback(null, JSON.parse(out))
+            } catch (err) {
+              console.error('Error parsing output: %s' + out)
+              throw err
+            }
           }
         })
         child.stderr.pipe(process.stderr, { end: false })
@@ -95,4 +101,8 @@ function generateReport (results, callback) {
   const child = exec(command, callback)
   child.stderr.pipe(process.stderr, { end: false })
   child.stdin.end(JSON.stringify(results))
+}
+
+function cleanOutput (out) {
+  return out.replace(/Swarm listening on .*\n/g, '')
 }
