@@ -15,6 +15,6 @@ function gotResult(str) {
 }
 
 function outputReport(result) {
-  const html = template({ results: result })
+  const html = template(result)
   process.stdout.write(html)
 }

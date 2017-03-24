@@ -22,7 +22,7 @@ function run (_suites, callback) {
     if (!err) {
       process.stderr.write('all finished\n'.green)
     }
-    callback(err, result)
+    callback(err, { suites: result })
   })
 }
 
