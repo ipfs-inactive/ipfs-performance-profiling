@@ -30,6 +30,7 @@ mapSeries(
         // run suite
         const command = 'node ' + __dirname + ' ' + suite
         const child = exec(command, (err, stdout) => {
+          console.log(stdout)
           if (err) {
             callback(err)
           } else {

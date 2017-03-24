@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "0x": "^2.4.0",
+    "async": "^2.1.5",
     "benchmark": "^2.1.3",
     "ipfs": "^0.22.1",
     "ipfsd-ctl": "^0.20.0",

@@ -3,7 +3,6 @@
 require('colors')
 const mapSeries = require('async/mapSeries')
 const Benchmark = require('benchmark')
-const Suite = Benchmark.Suite
 const os = require('os')
 
 const suites = require('./suites')
@@ -37,49 +36,116 @@ function runOne (_suite, callback) {
   }
   process.stderr.write((suite.name + ' started\n').yellow)
 
-  const s = Suite(suite.name)
-  let tests = suite.tests
+  const benchmarks = []
+  let tests = suite.tests || suite.test
   if (!Array.isArray(tests)) {
     tests = [tests]
   }
 
   tests.forEach((test, index) => {
     ENVIRONMENTS.forEach((env) => {
-      const name = (test.name || (suite.name) + (tests.length > 1 ? '-' + (index + 1) : '')) + '-' + env
-      s.add(name, prepare(test, env), { defer: true })
+      let teardownFn
+      let ipfs
+      const name = [test.name || suite.name,  tests.length > 1 && (index + 1), env].filter(Boolean).join('-')
+      const options = {
+        defer: true,
+        setup: setup,
+        teardown: teardown,
+      }
+      const benchmark = new Benchmark(name, wrapTest(test), options)
+      benchmark.env = env
+      benchmark.unwrappedFn = test
+      benchmarks.push(benchmark)
+
+      function setup (deferred) {
+        if (teardownFn) {
+          deferred.suResolve()
+          return // early
+        }
+        ipfs = null
+        teardownFn = prepare(env, (err, _ipfs) => {
+          if (err) {
+            throw err
+          }
+          ipfs = _ipfs
+          deferred.suResolve()
+        })
+      }
+
+      function teardown (deferred) {
+        if (!teardownFn) {
+          deferred.tdResolve()
+          return // early
+        }
+        const tdfn = teardownFn
+        teardownFn = null
+        tdfn((err) => {
+          if (err) {
+            throw err
+          }
+          deferred.tdResolve()
+        })
+      }
+
+      function wrapTest (test) {
+        return function (deferred) {
+          if (!ipfs) {
+            throw new Error('No ipfs')
+          }
+          test(ipfs, (err) => {
+            if (err) {
+              throw err
+            }
+            deferred.resolve()
+          })
+        }
+      }
     })
   })
 
-  s.on('complete', () => {
-    process.stderr.write(suite.name + ' finished\n')
-    callback(null, result(s))
-  })
+  mapSeries(
+    benchmarks,
+    (benchmark, cb) => {
+      console.error('RUNNING', benchmark.name)
+      benchmark.on('complete', () => {
+        cb(null, result(benchmark))
+      })
 
-  s.run({ async: true })
+      benchmark.run({ async: true })
+    },
+    (err, results) => {
+      if (err) {
+        throw err
+      }
+
+      console.error('benchmarks finished\n')
+      callback(null, {
+        suite: suite.name,
+        results: results
+      })
+    }
+  )
 }
 
-function result (suite) {
-  // console.log(suite)
+function result (benchmark) {
+  console.error(benchmark)
   return {
-    name: suite.name,
-    benchmarks: suite.map(benchmark => ({
-      name: benchmark.name,
-      suite: suite.name,
-      code: benchmark.fn.toString(),
-      platform: Benchmark.platform,
-      cpus: os.cpus(),
-      loadavg: os.loadavg(),
-      count: benchmark.count,
-      hz: benchmark.hz,
-      now: Date.now(),
-      stats: {
-        moe: benchmark.stats.moe,
-        rme: benchmark.stats.rme,
-        sem: benchmark.stats.sem,
-        deviation: benchmark.stats.deviation,
-        mean: benchmark.stats.mean,
-        variance: benchmark.stats.variance
-      }
-    }))
+    name: benchmark.name,
+    env: benchmark.env,
+    code: benchmark.unwrappedFn.toString(),
+    platform: Benchmark.platform,
+    cpus: os.cpus(),
+    loadavg: os.loadavg(),
+    count: benchmark.count,
+    hz: benchmark.hz,
+    now: Date.now(),
+    stats: {
+      moe: benchmark.stats.moe,
+      rme: benchmark.stats.rme,
+      sem: benchmark.stats.sem,
+      deviation: benchmark.stats.deviation,
+      mean: benchmark.stats.mean,
+      variance: benchmark.stats.variance
+    }
   }
 }

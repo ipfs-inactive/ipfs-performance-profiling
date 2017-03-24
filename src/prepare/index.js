@@ -6,32 +6,12 @@ const preparers = {
   'js-http': require('./js-http')
 }
 
-module.exports = function prepare (test, env) {
-  return function (d) {
-    const preparer = preparers[env]
-    if (!preparer) {
-      throw new Error('Unknown environment ' + env)
-    }
-
-    console.error('preparing %s environment...', env)
-    const shutdown = preparer((err, ipfs) => {
-      if (err) {
-        throw err
-      }
-
-      console.error('prepared.')
-
-      test(ipfs, (err) => {
-        if (err) {
-          throw err
-        }
-        shutdown((_err) => {
-          if (_err) {
-            throw _err
-          }
-          d.resolve()
-        })
-      })
-    })
+module.exports = function prepare (env, callback) {
+  const preparer = preparers[env]
+  if (!preparer) {
+    callback(new Error('Unknown environment ' + env))
   }
+
+  console.error('preparing %s environment...', env)
+  return preparer(callback)
 }
