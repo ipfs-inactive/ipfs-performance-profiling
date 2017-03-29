@@ -11,95 +11,114 @@
   <body class="container">
     <h1 class="centered">IPFS Benchmarks Report</h1>
 
-    <table class="table table-striped">
-      <tbody>
-        {{#each .}}
-          {{#each suites}}
-            <tr>
-              <th>{{suite}}</th>
-              <td>
-                <div class="well">
-                  <div style="float: left; width: 200px">
-                    <canvas height="200" id="{{suite}}/mean"></canvas>
-                    <script>
-                      var canvas = document.getElementById('{{suite}}/mean')
-                      var options = {
-                        type: 'horizontalBar',
-                        data: {
-                          labels: [
-                            {{#each results}}
-                              '{{env}}'{{#unless @last}},{{/unless}}
-                            {{/each}}
-                          ],
-                          datasets: [
-                            {
-                              label: 'mean',
-                              backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)'
-                              ],
-                              borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)'
-                              ],
-                              data: [
-                                {{#each results}}
-                                  {{stats.mean}}{{#unless @last}},{{/unless}}
-                                {{/each}}
-                              ]
-                            }
-                          ]
-                        }
+    {{#each .}}
+      {{#each suites}}
+        <h2>{{suite}}</h2>
+
+        <div class="panel-group" id="{{suite}}-accordion" role="tablist" aria-multiselectable="true">
+
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="{{suite}}-graphics-headingOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#{{suite}}-accordion" href="#{{suite}}-graphics" aria-expanded="true" aria-controls="{{suite}}-graphics">
+                  Graphics
+                </a>
+              </h4>
+            </div>
+            <div id="{{suite}}-graphics" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="{{suite}}-graphics-headingOne">
+              <div class="panel-body">
+                <div style="float: left; width: 200px">
+                  <canvas height="200" id="{{suite}}/mean"></canvas>
+                  <script>
+                    var canvas = document.getElementById('{{suite}}/mean')
+                    var options = {
+                      type: 'horizontalBar',
+                      data: {
+                        labels: [
+                          {{#each results}}
+                            '{{env}}'{{#unless @last}},{{/unless}}
+                          {{/each}}
+                        ],
+                        datasets: [
+                          {
+                            label: 'mean',
+                            backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(255, 206, 86, 0.2)'
+                            ],
+                            borderColor: [
+                              'rgba(255,99,132,1)',
+                              'rgba(54, 162, 235, 1)',
+                              'rgba(255, 206, 86, 1)'
+                            ],
+                            data: [
+                              {{#each results}}
+                                {{stats.mean}}{{#unless @last}},{{/unless}}
+                              {{/each}}
+                            ]
+                          }
+                        ]
                       }
-                      var chart = new Chart(canvas, options)
-                    </script>
-                  </div>
-
-                  <div style="float: left; width: 200px">
-                    <canvas height="200" id="{{suite}}/variance"></canvas>
-                    <script>
-                      var canvas = document.getElementById('{{suite}}/variance')
-                      var options = {
-                        type: 'horizontalBar',
-                        data: {
-                          labels: [
-                            {{#each results}}
-                              '{{env}}'{{#unless @last}},{{/unless}}
-                            {{/each}}
-                          ],
-                          datasets: [
-                            {
-                              label: 'variance',
-                              backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)'
-                              ],
-                              borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)'
-                              ],
-                              data: [
-                                {{#each results}}
-                                  {{stats.variance}}{{#unless @last}},{{/unless}}
-                                {{/each}}
-                              ]
-                            }
-                          ]
-                        }
-                      }
-                      var chart = new Chart(canvas, options)
-                    </script>
-                  </div>
-
-                  <div class="clearfix"></div>
-
+                    }
+                    var chart = new Chart(canvas, options)
+                  </script>
                 </div>
-                <a class="clearfix btn btn-primary" role="button" data-toggle="collapse" data-target="#{{suite}}-data" aria-expanded="false" aria-controls="{{suite}}-data">Show data</a>
-                <table class="table table-striped collapse" id="{{suite}}-data">
+
+                <div style="float: left; width: 200px">
+                  <canvas height="200" id="{{suite}}/variance"></canvas>
+                  <script>
+                    var canvas = document.getElementById('{{suite}}/variance')
+                    var options = {
+                      type: 'horizontalBar',
+                      data: {
+                        labels: [
+                          {{#each results}}
+                            '{{env}}'{{#unless @last}},{{/unless}}
+                          {{/each}}
+                        ],
+                        datasets: [
+                          {
+                            label: 'variance',
+                            backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(255, 206, 86, 0.2)'
+                            ],
+                            borderColor: [
+                              'rgba(255,99,132,1)',
+                              'rgba(54, 162, 235, 1)',
+                              'rgba(255, 206, 86, 1)'
+                            ],
+                            data: [
+                              {{#each results}}
+                                {{stats.variance}}{{#unless @last}},{{/unless}}
+                              {{/each}}
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                    var chart = new Chart(canvas, options)
+                  </script>
+                </div>
+
+                <div class="clearfix"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="{{suite}}-data-headingOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#{{suite}}-accordion" href="#{{suite}}-data" aria-expanded="true" aria-controls="{{suite}}-data">
+                  Data
+                </a>
+              </h4>
+            </div>
+            <div id="{{suite}}-data" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{suite}}-data-headingOne">
+              <div class="panel-body">
+                <table class="table table-striped">
                   <thead>
                     <tr>
                       <th>Environment</th>
@@ -125,118 +144,86 @@
                     {{/each}}
                   </tbody>
                 </table>
-              </td>
-            </tr>
-          {{/each}}
-        {{/each}}
-      </tbody>
-    </table>
+              </div>
+            </div>
+          </div>
 
-    <section>
-      <h2>Details</h2>
-      {{#each .}}
-        {{#each suites}}
-          <h3><a id="{{name}}"></a>Suite {{suite}}</h3>
-          {{#each results}}
-            <h4><a id="{{suite}}/{{name}}"></a>{{../suite}}/{{name}}:</h4>
-            <p>Context:</p>
-            <table class="table table-striped">
-              <tbody>
-                <tr>
-                  <th>Name</th>
-                  <td>{{name}}</td>
-                </tr>
-                <tr>
-                  <th>When</th>
-                  <td>{{now}}</td>
-                </tr>
-                <tr>
-                  <th>Code</th>
-                  <td><pre>{{code}}</pre></td>
-                </tr>
-                <tr>
-                  <th>Platform</th>
-                  <td>
-                    {{platform.description}}
-                  </td>
-                </tr>
-                <tr>
-                  <th>CPUs</th>
-                  <td>
-                    {{#each cpus}}
-                      <table class="table table-striped">
-                        <tbody>
-                          <tr>
-                            <th>Model</th>
-                            <td>{{model}}</td>
-                          </tr>
-                          <tr>
-                            <th>Speed</th>
-                            <td>{{speed}}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    {{/each}}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Load Average</th>
-                  <td>{{loadavg}}</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="{{suite}}-environment-headingOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#{{suite}}-accordion" href="#{{suite}}-environment" aria-expanded="true" aria-controls="{{suite}}-environment">
+                  Environment
+                </a>
+              </h4>
+            </div>
+            <div id="{{suite}}-environment" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{suite}}-environment-headingOne">
+              <div class="panel-body">
+                {{#each results}}
+                  <h4>{{env}}</h4>
+                  <table class="table table-striped">
+                    <tbody>
+                      <tr>
+                        <th>Name</th>
+                        <td>{{name}}</td>
+                      </tr>
+                      <tr>
+                        <th>When</th>
+                        <td>{{now}}</td>
+                      </tr>
+                      <tr>
+                        <th>Code</th>
+                        <td><pre>{{code}}</pre></td>
+                      </tr>
+                      <tr>
+                        <th>Platform</th>
+                        <td>
+                          {{platform.description}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>CPUs</th>
+                        <td>
+                          {{#each cpus}}
+                            <table class="table table-striped">
+                              <tbody>
+                                <tr>
+                                  <th>Model</th>
+                                  <td>{{model}}</td>
+                                </tr>
+                                <tr>
+                                  <th>Speed</th>
+                                  <td>{{speed}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          {{/each}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Load Average</th>
+                        <td>{{loadavg}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
 
-            <p>Results:</p>
-
-            <table class="table table-striped">
-              <tbody>
-                <tr>
-                  <th>Count</th>
-                  <td>{{count}}</td>
-                </tr>
-                <tr>
-                  <th>Hz</th>
-                  <td>{{hz}}</td>
-                </tr>
-                <tr>
-                  <th>Stats</th>
-                  <td>
-                    <table class="table table-striped">
-                      <tbody>
-                        <tr>
-                          <th>Mean</th>
-                          <td>{{stats.mean}}</td>
-                        </tr>
-                        <tr>
-                          <th>Variance</th>
-                          <td>{{stats.variance}}</td>
-                        </tr>
-                        <tr>
-                          <th>Deviation</th>
-                          <td>{{stats.deviation}}</td>
-                        </tr>
-                        <tr>
-                          <th>MOE</th>
-                          <td>{{stats.moe}}</td>
-                        </tr>
-                        <tr>
-                          <th>RME</th>
-                          <td>{{stats.rme}}</td>
-                        </tr>
-                        <tr>
-                          <th>SEM</th>
-                          <td>{{stats.sem}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <hr>
-          {{/each}}
-        {{/each}}
+                  <table class="table table-striped">
+                    <tbody>
+                      <tr>
+                        <th>Count</th>
+                        <td>{{count}}</td>
+                      </tr>
+                      <tr>
+                        <th>Hz</th>
+                        <td>{{hz}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
       {{/each}}
-    </section>
+    {{/each}}
   </body>
 </html>
