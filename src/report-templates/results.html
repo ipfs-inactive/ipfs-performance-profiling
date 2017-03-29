@@ -4,52 +4,133 @@
     <title>IPFS Benchmarks Report</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href='../../css/bootstrap.css' rel='stylesheet' type='text/css'>
+    <script src="../../js/Chart.bundle.min.js"></script>
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
   </head>
   <body class="container">
-    <h1>IPFS Benchmarks Report</h1>
+    <h1 class="centered">IPFS Benchmarks Report</h1>
 
-    <section>
-      <h2>Summary</h2>
-      <table class="table table-striped">
-        <tbody>
-          {{#each .}}
-            {{#each suites}}
-              <tr>
-                <th>{{suite}}</th>
-                <td>
-                  <table class="table table-striped">
-                    <thead>
+    <table class="table table-striped">
+      <tbody>
+        {{#each .}}
+          {{#each suites}}
+            <tr>
+              <th>{{suite}}</th>
+              <td>
+                <div class="well">
+                  <div style="float: left; width: 200px">
+                    <canvas height="200" id="{{suite}}/mean"></canvas>
+                    <script>
+                      var canvas = document.getElementById('{{suite}}/mean')
+                      var options = {
+                        type: 'horizontalBar',
+                        data: {
+                          labels: [
+                            {{#each results}}
+                              '{{env}}'{{#unless @last}},{{/unless}}
+                            {{/each}}
+                          ],
+                          datasets: [
+                            {
+                              label: 'mean',
+                              backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)'
+                              ],
+                              borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                              ],
+                              data: [
+                                {{#each results}}
+                                  {{stats.mean}}{{#unless @last}},{{/unless}}
+                                {{/each}}
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                      var chart = new Chart(canvas, options)
+                    </script>
+                  </div>
+
+                  <div style="float: left; width: 200px">
+                    <canvas height="200" id="{{suite}}/variance"></canvas>
+                    <script>
+                      var canvas = document.getElementById('{{suite}}/variance')
+                      var options = {
+                        type: 'horizontalBar',
+                        data: {
+                          labels: [
+                            {{#each results}}
+                              '{{env}}'{{#unless @last}},{{/unless}}
+                            {{/each}}
+                          ],
+                          datasets: [
+                            {
+                              label: 'variance',
+                              backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)'
+                              ],
+                              borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                              ],
+                              data: [
+                                {{#each results}}
+                                  {{stats.variance}}{{#unless @last}},{{/unless}}
+                                {{/each}}
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                      var chart = new Chart(canvas, options)
+                    </script>
+                  </div>
+
+                  <div class="clearfix"></div>
+
+                </div>
+                <a class="clearfix btn btn-primary" role="button" data-toggle="collapse" data-target="#{{suite}}-data" aria-expanded="false" aria-controls="{{suite}}-data">Show data</a>
+                <table class="table table-striped collapse" id="{{suite}}-data">
+                  <thead>
+                    <tr>
+                      <th>Environment</th>
+                      <th>Mean</th>
+                      <th>Variance</th>
+                      <th>Deviation</th>
+                      <th>MOE</th>
+                      <th>RME</th>
+                      <th>SEM</th>
+                    </tr>
+                </thead>
+                  <tbody>
+                    {{#each results}}
                       <tr>
-                        <th>Environment</th>
-                        <th>Mean</th>
-                        <th>Variance</th>
-                        <th>Deviation</th>
-                        <th>MOE</th>
-                        <th>RME</th>
-                        <th>SEM</th>
+                        <th>{{env}}</th>
+                        <td>{{stats.mean}}</td>
+                        <td>{{stats.variance}}</td>
+                        <td>{{stats.deviation}}</td>
+                        <td>{{stats.moe}}</td>
+                        <td>{{stats.rme}}</td>
+                        <td>{{stats.sem}}</td>
                       </tr>
-                  </thead>
-                    <tbody>
-                      {{#each results}}
-                        <tr>
-                          <th>{{env}}</th>
-                          <td>{{stats.mean}}</td>
-                          <td>{{stats.variance}}</td>
-                          <td>{{stats.deviation}}</td>
-                          <td>{{stats.moe}}</td>
-                          <td>{{stats.rme}}</td>
-                          <td>{{stats.sem}}</td>
-                        </tr>
-                      {{/each}}
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            {{/each}}
+                    {{/each}}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
           {{/each}}
-        </tbody>
-      </table>
-    </section>
+        {{/each}}
+      </tbody>
+    </table>
 
     <section>
       <h2>Details</h2>

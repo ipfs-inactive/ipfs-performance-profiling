@@ -128,7 +128,6 @@ function runOne (_suite, callback) {
 }
 
 function result (benchmark) {
-  console.error(benchmark)
   return {
     name: benchmark.name,
     env: benchmark.env,

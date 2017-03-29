@@ -11,6 +11,7 @@ process.stdin.pipe(concat(gotResult))
 
 function gotResult(str) {
   const result = JSON.parse(str)
+  console.error(str.toString())
   outputReport(result)
 }
 
