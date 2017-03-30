@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oswald Light'), local('Oswald-Light'), url('../fonts/oswald.ttf') format('truetype');
+}
+
+html * {
+  color: #000 !important;
+  font-family: 'Oswald', sans-serif !important;
+}
+
+html pre {
+  font-size: 0.7em;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
+}
