@@ -41,3 +41,6 @@ reports/out
 
 # Report output sample
 out.json
+
+# Mac OS files
+.DS_Store
