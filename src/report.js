@@ -9,7 +9,16 @@ const fs = require('fs')
 const argv = require('yargs').argv
 const mapSeries = require('async/mapSeries')
 const waterfall = require('async/waterfall')
-const parallel = require('async/parallel')
+
+const aggregate = require('./aggregate')
+
+const PATTERNS_TO_OBLITERATE = [
+  /Swarm listening on .*\n/g,
+  /Starting at .*\n/g,
+  /API is listening on: .*\n/g,
+  /Gateway \(readonly\) is listening on: .*\n/g,
+  /Stopping server/g
+]
 
 let suites = argv._
 if (!suites.length) {
@@ -74,9 +83,11 @@ mapSeries(
 
     const results = _results.reduce((acc, a) => acc.concat(a), [])
 
-    parallel([
-      (callback) => saveResults(results, callback),
-      (callback) => generateReport(results, callback),
+    waterfall([
+      saveResults.bind(null, results),
+      aggregate,
+      merge,
+      generateReport
       ],
       (err) => {
         if (err) {
@@ -87,12 +98,38 @@ mapSeries(
         process.stderr.write('opening ' + out + '\n')
         open(out, { wait: false })
       })
+
+    function saveResults (results, callback) {
+      const out = resultsJSONPath
+      fs.writeFile(out, JSON.stringify(results, null, '  '), callback)
+    }
+
+    function merge (aggregationResults, callback) {
+      console.log('aggregation results', aggregationResults)
+      aggregationResults.forEach((aggResult) => {
+        const suite = findSuiteInResults(results, aggResult.suite)
+        if (!suite) {
+          console.error('Could not find suite named ' + aggResult.suite)
+        } else {
+          suite.history = aggResult.benchmarks
+        }
+      })
+      callback(null, results)
+    }
   }
 )
 
-function saveResults (results, callback) {
-  const out = resultsJSONPath
-  fs.writeFile(out, JSON.stringify(results, null, '  '), callback)
+function findSuiteInResults (results, suiteName) {
+  let foundSuite
+  results.forEach((result) => {
+    result.suites.forEach((suite) => {
+      if (suite.suite === suiteName) {
+        foundSuite = suite
+      }
+    })
+  })
+
+  return foundSuite
 }
 
 function generateReport (results, callback) {
@@ -105,13 +142,5 @@ function generateReport (results, callback) {
 }
 
 function cleanOutput (out) {
-  const patternsToObliterate = [
-    /Swarm listening on .*\n/g,
-    /Starting at .*\n/g,
-    /API is listening on: .*\n/g,
-    /Gateway \(readonly\) is listening on: .*\n/g,
-    /Stopping server/g
-  ]
-
-  return patternsToObliterate.reduce((out, p) => out.replace(p, ''), out)
+  return PATTERNS_TO_OBLITERATE.reduce((out, p) => out.replace(p, ''), out)
 }
