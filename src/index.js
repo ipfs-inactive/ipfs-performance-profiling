@@ -3,7 +3,8 @@
 const run = require('./run')
 
 const argv = require('yargs')
-  .usage('$0 <cmd> [--json] [--envs=<comma-separated envs>] ')
+  .usage('$0 [--json] [--envs=<comma-separated envs>] ')
+  .help()
   .argv
 
 console.log(argv)
