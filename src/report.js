@@ -37,7 +37,7 @@ mapSeries(
     waterfall([
       (callback) => {
         // run suite
-        const command = 'node ' + __dirname + ' ' + suite
+        const command = 'node ' + __dirname + ' ' + suite + ' --json'
         const child = exec(command, (err, stdout) => {
           console.log(stdout)
           if (err) {

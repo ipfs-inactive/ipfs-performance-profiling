@@ -11,8 +11,7 @@
     "lint": "aegir-lint",
     "benchmarks": "node .",
     "benchmarks:report": "node src/report",
-    "benchmarks:report:profile": "node src/report --profile=true",
-    "benchmarks:report:aggregate": "node src/aggregate | node src/generate-aggregate-report"
+    "benchmarks:report:profile": "node src/report --profile=true"
   },
   "pre-commit": [
     "lint",
@@ -42,7 +41,8 @@
     "benchmark": "^2.1.3",
     "ipfs": "^0.22.1",
     "ipfsd-ctl": "^0.20.0",
-    "opn": "^4.0.2"
+    "opn": "^4.0.2",
+    "yargs": "^7.0.2"
   },
   "contributors": [
     "Pedro Teixeira <i@pgte.me>"

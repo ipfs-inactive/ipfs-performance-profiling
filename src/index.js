@@ -1,17 +1,46 @@
 'use strict'
 
-const runner = require('./runner')
+const run = require('./run')
 
-let suites = process.argv.slice(2)
+const argv = require('yargs')
+  .usage('$0 <cmd> [--json] [--envs=<comma-separated envs>] ')
+  .argv
+
+console.log(argv)
+
+let suites = argv._
 
 if (!suites.length) {
   suites = undefined
 }
 
-runner.run(suites, (err, results) => {
+const options = {
+  envs: argv.envs && argv.envs.split(',')
+}
+
+run(suites, options, (err, results) => {
   if (err) {
     throw err
   }
 
-  console.log(JSON.stringify(results, null, '  '))
+  if (argv.json) {
+    console.log(JSON.stringify(results, null, '  '))
+  } else {
+    console.log('\nResults:\n'.yellow)
+    results.suites.forEach((s) => {
+      console.log(s.suite + ':')
+      s.results.forEach((result) => {
+        console.log('  ' + result.env + ':')
+        const stats = {
+          mean: result.stats.mean,
+          variance: result.stats.variance,
+          deviation: result.stats.deviation,
+          moe: result.stats.moe,
+          rme: result.stats.rme,
+          sem: result.stats.sem
+        }
+        console.log('    ' + Object.keys(stats).map((statKey) => statKey + ': ' + stats[statKey]).join(', '))
+      })
+    })
+  }
 })
