@@ -7,8 +7,6 @@ const argv = require('yargs')
   .help()
   .argv
 
-console.log(argv)
-
 let suites = argv._
 
 if (!suites.length) {
