@@ -280,6 +280,74 @@
                       </div>
                     </div>
                   </div>
+
+                  <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="{{suite}}-history-headingOne">
+                      <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" href="#{{suite}}-history" aria-expanded="true" aria-controls="{{suite}}-history">
+                          History
+                        </a>
+                      </h4>
+                    </div>
+                    <div id="{{suite}}-history" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{suite}}-history-headingOne">
+                      <div class="panel-body container-fluid">
+                        {{#each history}}
+                          <div class="well">
+                            <h4 class="text-center">{{name}}</h4>
+                            <div class="row">
+                              {{#each metric}}
+                                <div class="col-md-4">
+                                  <span>{{@key}}</span>
+                                  <canvas id="{{../../suite}}/{{../name}}/{{@key}}"></canvas>
+                                  <script>
+                                    (function() {
+                                      let shown = false
+                                      $('#{{../../suite}}-history').on('shown.bs.collapse', function() {
+                                        if (shown) {
+                                          return
+                                        }
+
+                                        var canvas = document.getElementById('{{../../suite}}/{{../name}}/{{@key}}')
+                                        var options = {
+                                          type: 'line',
+                                          data: {
+                                            datasets: [{
+                                              label: '{{@key}}',
+                                              data: [
+                                                {{#each this}}
+                                                  {
+                                                    x: {{when}},
+                                                    y: {{value}}
+                                                  }{{#unless @last}},{{/unless}}
+                                                {{/each}}
+                                              ],
+                                              backgroundColor: '{{lookup ../colors @key}}'
+                                            }]
+                                          },
+                                          options: {
+                                            scales: {
+                                              xAxes: [{
+                                                type: 'time',
+                                                position: 'bottom'
+                                              }]
+                                            }
+                                          }
+                                        }
+                                        var chart = new Chart(canvas, options)
+
+                                        shown = true
+                                      })
+                                    }())
+                                  </script>
+                                </div>
+                              {{/each}}
+                            </div>
+                          </div>
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
