@@ -348,6 +348,25 @@
                     </div>
                   </div>
 
+                  <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="{{suite}}-profile-headingOne">
+                      <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" href="#{{suite}}-profile" aria-expanded="true" aria-controls="{{suite}}-profile">
+                          Profile
+                        </a>
+                      </h4>
+                    </div>
+                    <div id="{{suite}}-profile" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{suite}}-profile-headingOne">
+                      <div class="panel-body container-fluid">
+                        {{#each results}}
+                          {{#if profile}}
+                            <p><a href="{{../suite}}/{{profile}}" target="_blank">{{env}}</a></p>
+                          {{/if}}
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

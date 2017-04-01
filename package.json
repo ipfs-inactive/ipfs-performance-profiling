@@ -11,7 +11,7 @@
     "lint": "aegir-lint",
     "benchmarks": "node .",
     "benchmarks:report": "node src/report",
-    "benchmarks:report:profile": "node src/report --profile=true"
+    "benchmarks:report:profile": "sudo node src/report --profile=true"
   },
   "pre-commit": [
     "lint",

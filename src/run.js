@@ -16,6 +16,8 @@ const ENVIRONMENTS = [
 
 module.exports = run
 
+module.exports.allEnvironments = ENVIRONMENTS
+
 function run (_suites, options, callback) {
   if (typeof options === 'function') {
     callback = options

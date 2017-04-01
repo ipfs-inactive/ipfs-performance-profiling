@@ -8,9 +8,12 @@ const mkdirp = require('mkdirp')
 const fs = require('fs')
 const argv = require('yargs').argv
 const mapSeries = require('async/mapSeries')
+const eachSeries = require('async/eachSeries')
 const waterfall = require('async/waterfall')
 
 const aggregate = require('./aggregate')
+const profile = require('./profile')
+const envs = require('./run').allEnvironments
 
 const PATTERNS_TO_OBLITERATE = [
   /Swarm listening on .*\n/g,
@@ -27,9 +30,10 @@ if (!suites.length) {
 
 const prefix = (new Date()).toISOString() + '-report'
 const outDir = join(__dirname, '..', 'reports', 'out', prefix)
-mkdirp.sync(outDir)
 const out = join(outDir, 'report.html')
 const resultsJSONPath = join(outDir, 'results.json')
+
+mkdirp.sync(outDir)
 
 mapSeries(
   suites,
@@ -37,7 +41,7 @@ mapSeries(
     waterfall([
       (callback) => {
         // run suite
-        const command = 'node ' + __dirname + ' ' + suite + ' --json'
+        const command = ['node', __dirname, suite, ' --json'].join(' ')
         const child = exec(command, (err, stdout) => {
           console.log(stdout)
           if (err) {
@@ -60,21 +64,37 @@ mapSeries(
           callback(null, result)
           return
         }
-        process.stderr.write(('profiling ' + suite + '\n').yellow)
-        const command = ['node', join(__dirname, 'profile'), suite, '--out', join(outDir, suite)].join(' ')
-        const child = exec(command, (err, stdout) => {
-          if (err) {
-            callback(err)
-          } else {
-            process.stderr.write('done\n\n'.green)
-            result[0].profile = join(suite, stdout.trim())
-            callback(null, result)
+
+        eachSeries(envs, (env, callback) => {
+          if (env === 'go') {
+            callback()
+            return // early
           }
+
+          process.stderr.write(('profiling ' + suite + ', env: ' + env + '\n').yellow)
+          mkdirp.sync(join(outDir, suite, env))
+
+          profile(join(outDir, suite), [suite], [env], (err, profileResults) => {
+            if (err) {
+              callback(err)
+              return // early
+            }
+            process.stderr.write('done\n\n'.green)
+
+            // find suite
+
+            profileResults.forEach((profileResult) => {
+              const envResults = findEnvResultsInResult(result, suite, profileResult.env)
+              envResults.profile = profileResult.path
+            })
+
+            callback(null, result)
+          })
+        }, (err) => {
+          callback(err, result)
         })
-        child.stderr.pipe(process.stderr, { end: false })
       }
-      ],
-      callback)
+    ], callback)
   },
   (err, _results) => {
     if (err) {
@@ -143,4 +163,19 @@ function generateReport (results, callback) {
 
 function cleanOutput (out) {
   return PATTERNS_TO_OBLITERATE.reduce((out, p) => out.replace(p, ''), out)
+}
+
+function findEnvResultsInResult (result, suite, env) {
+  let found
+  result.suites.forEach((s) => {
+    if (s.suite === suite) {
+      s.results.forEach((result) => {
+        if (result.env === env) {
+          found = result
+        }
+      })
+    }
+  })
+
+  return found
 }
