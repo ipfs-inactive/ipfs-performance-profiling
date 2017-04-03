@@ -2,7 +2,7 @@
 
 require('colors')
 const mapSeries = require('async/mapSeries')
-const Benchmark = require('benchmark')
+const Benchmark = require('benchmark-async')
 const os = require('os')
 
 const suites = require('./suites')
