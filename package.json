@@ -36,9 +36,9 @@
     "aegir": "^9.4.0"
   },
   "dependencies": {
-    "0x": "^2.4.0",
+    "0x": "^2.4.2",
     "async": "^2.1.5",
-    "benchmark": "^2.1.3",
+    "benchmark-async": "^2.2.0",
     "ipfs": "^0.22.1",
     "ipfsd-ctl": "^0.20.0",
     "opn": "^4.0.2",
