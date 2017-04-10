@@ -1,4 +1,5 @@
 'use strict'
+/* eslint no-console: ["error", {allow: ["error"]}] */
 
 require('colors')
 const mapSeries = require('async/mapSeries')
@@ -53,11 +54,11 @@ function run (_suites, options, callback) {
       envs.forEach((env) => {
         let teardownFn
         let ipfs
-        const name = [test.name || suite.name,  tests.length > 1 && (index + 1), env].filter(Boolean).join('-')
+        const name = [test.name || suite.name, tests.length > 1 && (index + 1), env].filter(Boolean).join('-')
         const options = {
           defer: true,
           setup: setup,
-          teardown: teardown,
+          teardown: teardown
         }
         const benchmark = new Benchmark(name, wrapTest(test), options)
         benchmark.env = env

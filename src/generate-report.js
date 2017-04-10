@@ -9,13 +9,14 @@ const template = handlebars.compile(
 
 process.stdin.pipe(concat(gotResult))
 
-function gotResult(str) {
+function gotResult (str) {
   const result = JSON.parse(str)
+  /* eslint no-console: ["error", {allow: ["error"]}] */
   console.error(str.toString())
   outputReport(result)
 }
 
-function outputReport(result) {
+function outputReport (result) {
   const html = template(result)
   process.stdout.write(html)
 }

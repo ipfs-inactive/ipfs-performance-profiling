@@ -28,21 +28,19 @@ function profileOneEnv (baseOutDir, suites, env, callback) {
   const outDir = path.join(baseOutDir, env)
   const args = ['--output-dir', outDir].concat([process.argv[0], __dirname].concat(suites).concat('--envs=' + env))
 
-  console.log('SPAWNING 0x', args.join(' '))
   const child = spawn('0x', args, {})
   let lastLine = ''
   let error
   let errorOut = ''
-  let ended = false
+  // let ended = false
 
-  process.once('SIGINT', () => {
-    if (!ended) {
-      console.error('INT')
-      child.kill('SIGINT')
-    }
-  })
+  // process.once('SIGINT', () => {
+  //   if (!ended) {
+  //     child.kill('SIGINT')
+  //   }
+  // })
 
-  child.stdout.pipe(process.stdout, { end : false })
+  child.stdout.pipe(process.stdout, { end: false })
 
   child.stderr.pipe(split())
     .on('data', (line) => {
@@ -52,8 +50,7 @@ function profileOneEnv (baseOutDir, suites, env, callback) {
       }
     })
     .once('end', () => {
-      console.log('ENDED')
-      ended = true
+      // ended = true
       if (!error) {
         const matched = lastLine.match(/file:\/\/.*\/flamegraph.html/)
         if (matched) {

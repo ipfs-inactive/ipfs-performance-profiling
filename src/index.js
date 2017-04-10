@@ -1,4 +1,5 @@
 'use strict'
+/* eslint no-console: ["error", {allow: ["log"]}] */
 
 const run = require('./run')
 

@@ -17,7 +17,6 @@ if (require.main === module) {
   })
 }
 
-
 module.exports = aggregate
 
 function aggregate (callback) {
@@ -29,7 +28,7 @@ function aggregate (callback) {
           path: join('out', report, 'report.html'),
           content: JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }))
         }
-      } catch(err) {
+      } catch (err) {
         if (OK_ERRORS.indexOf(err.code) > -1) {
           return null
         }

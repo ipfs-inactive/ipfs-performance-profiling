@@ -1,4 +1,5 @@
 'use strict'
+/* eslint no-console: ["error", {allow: ["error"]}] */
 
 require('colors')
 const join = require('path').join
@@ -45,7 +46,6 @@ mapSeries(
         // run suite
         const command = ['node', __dirname, suite, ' --json', '--envs=' + envs.join(',')].join(' ')
         const child = exec(command, (err, stdout) => {
-          console.log(stdout)
           if (err) {
             callback(err)
           } else {
@@ -105,11 +105,12 @@ mapSeries(
 
     const results = _results.reduce((acc, a) => acc.concat(a), [])
 
-    waterfall([
-      saveResults.bind(null, results),
-      aggregate,
-      merge,
-      generateReport
+    waterfall(
+      [
+        saveResults.bind(null, results),
+        aggregate,
+        merge,
+        generateReport
       ],
       (err) => {
         if (err) {
@@ -127,7 +128,6 @@ mapSeries(
     }
 
     function merge (aggregationResults, callback) {
-      console.log('aggregation results', aggregationResults)
       aggregationResults.forEach((aggResult) => {
         const suite = findSuiteInResults(results, aggResult.suite)
         if (!suite) {
