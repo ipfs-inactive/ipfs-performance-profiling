@@ -41,7 +41,7 @@ Available environments are:
 Run named benchmark on the js-http environment:
 
 ```
-$ npm run benchmarks import-files -- --envs=js-http
+$ npm run benchmarks -- files-add-1MB-file --envs=js-http
 ```
 
 ### JSON output
@@ -49,7 +49,7 @@ $ npm run benchmarks import-files -- --envs=js-http
 You can output a JSON report using the `--json` options:
 
 ```bash
-$ npm run benchmarks import-files -- --json
+$ npm run benchmarks -- files-add-1MB-file --json
 ```
 
 ## Reports
@@ -81,7 +81,7 @@ module.exports = function (ipfs, callback) {
 }
 ```
 
-Add them to the `src/suites` dir. Also, don't forget to add an entry to `src/suites/index.js` so that it can be found.
+Add it under its own dir under `src/suites`. Also, don't forget to add an entry to `src/suites/index.js` so that it can be found.
 
 ### Logging
 
