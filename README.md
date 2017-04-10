@@ -46,10 +46,18 @@ $ npm run benchmarks import-files -- --json
 
 ## Reports
 
-You run and produce HTML reports using:
+You run and produce an HTML report using:
 
 ```bash
 $ npm run benchmarks:report
+```
+
+### Report with profiling data
+
+You run and produce an HTML report containing links to profiling data using:
+
+```bash
+$ npm run benchmarks:report:profile -- [<suite>] --envs=[env1,env2]
 ```
 
 ## Creating a benchmark suite
