@@ -79,3 +79,15 @@ Add them to the `src/suites` dir. Also, don't forget to add an entry to `src/sui
 
 The suite runner uses the `stdout` channel for the benchmark results. If you want to log to the console, use `console.error` instead.
 
+
+## Contribute
+
+Feel free to join in. All welcome. Open an [issue](https://github.com/ipfs/js-ipfs-unixfs-engine/issues)!
+
+This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+[![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/contributing.md)
+
+## License
+
+[MIT](LICENSE)
