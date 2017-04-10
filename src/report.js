@@ -13,7 +13,7 @@ const waterfall = require('async/waterfall')
 
 const aggregate = require('./aggregate')
 const profile = require('./profile')
-const envs = require('./run').allEnvironments
+const allEnvs = require('./run').allEnvironments
 
 const PATTERNS_TO_OBLITERATE = [
   /Swarm listening on .*\n/g,
@@ -33,6 +33,8 @@ const outDir = join(__dirname, '..', 'reports', 'out', prefix)
 const out = join(outDir, 'report.html')
 const resultsJSONPath = join(outDir, 'results.json')
 
+const envs = argv.envs ? argv.envs.split(',').map(s => s.trim()) : allEnvs
+
 mkdirp.sync(outDir)
 
 mapSeries(
@@ -41,7 +43,7 @@ mapSeries(
     waterfall([
       (callback) => {
         // run suite
-        const command = ['node', __dirname, suite, ' --json'].join(' ')
+        const command = ['node', __dirname, suite, ' --json', '--envs=' + envs.join(',')].join(' ')
         const child = exec(command, (err, stdout) => {
           console.log(stdout)
           if (err) {

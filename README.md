@@ -52,3 +52,22 @@ You run and produce HTML reports using:
 $ npm run benchmarks:report
 ```
 
+## Creating a benchmark suite
+
+A benchmark suite is simply a function that gets two arguments: an IPFS client object and a callback:
+
+```js
+module.exports = function (ipfs, callback) {
+  ipfs.files.add([{
+    path: 'a.txt',
+    content: new Buffer('a')
+  }], callback)
+}
+```
+
+Add them to the `src/suites` dir. Also, don't forget to add an entry to `src/suites/index.js` so that it can be found.
+
+### Logging
+
+The suite runner uses the `stdout` channel for the benchmark results. If you want to log to the console, use `console.error` instead.
+
